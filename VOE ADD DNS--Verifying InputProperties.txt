@@ -1,0 +1,114 @@
+
+***************************************************VOE ADD DNS Workflow*****************************************************
+******************************************************************************************************************
+
+**************************************************Verifying InputProperties******************************************************
+/*
+   vraEvents is an associative array which enables us to map a vRA event from its
+   dotted notation (e.g. "compute.provision.post") to its friendly name (e.g.
+   "Compute post provision").
+*/
+var vraEvents = {
+    "blueprint.configuration":			"Cloud template configuration",
+    "blueprint.version.configuration":		"Cloud template version configuration",
+    "compute.allocation.pre":			"Compute allocation",
+    "compute.gateway.provision.post":		"Compute gateway post provisioning",
+    "compute.gateway.removal.post":		"Compute gateway post removal",
+    "compute.gateway.provision.pre":		"Compute gateway provisioning",
+    "compute.gateway.removal.pre":		"Compute gateway removal",
+    "compute.initial.power.on":			"Compute initial power on",
+    "compute.nat.provision.post":		"Compute nat post provisioning",
+    "compute.nat.removal.post":			"Compute nat post removal",
+    "compute.nat.provision.pre":		"Compute nat provisioning",
+    "compute.nat.removal.pre":			"Compute nat removal",
+    "compute.provision.post":			"Compute post provision",
+    "compute.removal.post":			"Compute post removal",
+    "compute.provision.pre":			"Compute provision",
+    "compute.removal.pre":			"Compute removal",
+    "compute.reservation.pre":			"Compute reservation",
+    "custom.resource.provision.post":		"Custom resource post provision",
+    "custom.resource.provision.pre":		"Custom resource pre provision",
+    "deployment.action.post":			"Deployment action completed",
+    "deployment.action.pre":			"Deployment action requested",
+    "deployment.request.post":			"Deployment completed",
+    "relocation-service.deployment.onboarded":	"Deployment onboarded",
+    "deployment.request.pre":			"Deployment requested",
+    "deployment.resource.action.post":		"Deployment resource action completed",
+    "deployment.resource.action.pre":		"Deployment resource action requested",
+    "deployment.resource.request.post":		    "Deployment resource completed",
+    "deployment.resource.request.pre":		    "Deployment resource requested",
+    "disk.allocation.pre":			            "Disk allocation",
+    "disk.attach.pre":				            "Disk attach",
+    "disk.detach.post":                         "Disk detach",
+    "disk.removal.post":			            "Disk post Removal",
+    "disk.resize.post":				            "Disk post resize",
+    "kubernetes.cluster.allocation.pre":	    "Kubernetes cluster allocation",
+    "kubernetes.cluster.provision.post":	    "Kubernetes cluster post provision",
+    "kubernetes.cluster.removal.post":		    "Kubernetes cluster post removal",
+    "kubernetes.cluster.provision.pre":		    "Kubernetes cluster provision",
+    "kubernetes.cluster.removal.pre":		    "Kubernetes cluster removal",
+    "kubernetes.namespace.allocation.pre":	    "Kubernetes namespace allocation",
+    "kubernetes.namespace.provision.post":	    "Kubernetes namespace post provision",
+    "kubernetes.namespace.removal.post":	    "Kubernetes namespace post removal",
+    "kubernetes.namespace.provision.pre":	    "Kubernetes namespace provision",
+    "kubernetes.namespace.removal.pre":		    "Kubernetes namespace removal",
+    "kubernetes.sv.namespace.allocation.pre":	"Kubernetes supervisor namespace allocation",
+    "kubernetes.sv.namespace.provision.post":	"Kubernetes supervisor namespace post provision",
+    "kubernetes.sv.namespace.removal.post":     "Kubernetes supervisor namespace post removal",
+    "kubernetes.sv.namespace.provision.pre":	"Kubernetes supervisor namespace provision",
+    "kubernetes.sv.namespace.removal.pre":      "Kubernetes supervisor namespace removal",
+    "load.balancer.provision.post":		        "Load balancer post provision",
+    "load.balancer.removal.post":		        "Load balancer post removal",
+    "load.balancer.provision.pre":		        "Load balancer provision",
+    "load.balancer.removal.pre":		        "Load balancer removal",
+    "network.configure":			            "Network Configure",
+    "network.provisioning.post":	        	"Network post provisioning",
+    "network.removal.post":			            "Network post removal",
+    "network.provisioning.pre":			        "Network provisioning",
+    "network.removal.pre":			            "Network removal",
+    "project-service.project.lifecycle":	    "Project Lifecycle Event Topic",
+    "provisioning.request.pre":			        "Provisioning request",
+    "security.group.provision.post":		    "Security group post provision",
+    "security.group.removal.post":		        "Security group post removal",
+    "security.group.provision.pre":		        "Security group provision",
+    "security.group.removal.pre":		        "Security group removal",
+}
+
+// Find out the vRA event (in dotted notation).
+var vraEvent = System.getContext().getParameter("__metadata_eventTopicId");
+
+// Log both the friendly name (e.g. "Compute post provision") and the dotted notation
+// (e.g. "compute.provision.post") of the vRA event.
+System.log("vRA event name:   " + vraEvents[vraEvent]);
+System.log("vRA event name (dotted): " + vraEvent);
+
+
+// Create a variable we'll use to get info from the payload sent by vRA.
+var customProperties = new Properties();
+
+// Get a handle on the custom properties that were passed in via the payload by vRA.
+customProperties = inputProperties.get("customProperties");
+
+if (customProperties == null) {
+    // Not all vRA events have customProperties (e.g. deployment.action.pre does not)
+    // This event does not have custom properties, so do nothing.
+} else {
+    // This event _does_ have custom properties, so let's extract them.
+
+    // Extract two custom properties defined by vRA:
+    flavorMapping = customProperties.get("flavor");
+    imageMapping = customProperties.get("image");
+
+    // Extract two user-defined custom properties.
+    hostName = customProperties.get("yamlHostname1");
+    ipAddress = customProperties.get("yamlIpAddress");
+
+    // Log the custom properties.
+    System.log("flavorMapping: " + flavorMapping);
+    System.log("imageMapping: " + imageMapping);
+	System.log("Hostname: " + hostName);
+	System.log("IP Address: " + ipAddress);
+}
+
+
+
