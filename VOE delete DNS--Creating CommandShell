@@ -1,0 +1,13 @@
+****************************************************VOE delete DNS--Creating CommandShell.txt*****************************************************************************************
+// Build command to remove the PTR record
+pshellCommand =                 '$Octet4 = "' + ipAddress + '".Split(".")[-1]; ';
+pshellCommand = pshellCommand + '$Octet3 = "' + ipAddress + '".Split(".")[-2]; ';
+pshellCommand = pshellCommand + '$Octets34Reversed = $Octet4 + "." + $Octet3; ';
+pshellCommand = pshellCommand + 'Remove-DnsServerResourceRecord -Name "$Octets34Reversed" -ZoneName "20.172.in-addr.arpa" -RRType Ptr -Force; ';
+
+// Build command to remove the A record
+pshellCommand = pshellCommand + cmdletName + ' -Name "' + hostName + '" -ZoneName "' + zoneName +'" -Force -RRType ' + '"A"; ';
+
+System.log("pshellCommand is " + pshellCommand);
+
+*******************************************************************************************************************************************************************************
